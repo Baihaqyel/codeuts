@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple CSV Table Display</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #b6b6b6;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        input[type="file"] {
+            display: block;
+            margin: 20px auto;
+            padding: 10px;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ffffff;
+            padding: 8px;
+        }
+
+        th {
+            background-color: #d6d6d8;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        input[type="text"]{
+            background-image: url('/css/searchicon.png'); /* Add a search icon to input */
+            background-position: 10px 12px; /* Position the search icon */
+            background-repeat: no-repeat; /* Do not repeat the icon image */
+            width: 80%; /* Full-width */
+            font-size: 16px; /* Increase font-size */
+            padding: 12px 20px 12px 40px; /* Add some padding */
+            border: 1px solid #ddd; /* Add a grey border */
+            margin-bottom: 12px; /* Add some space below the input */
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Upload CSV and Display Table</h1>
+    <input type="file" id="fileInput" accept=".csv">
+    <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Cari Data">
+    <table id="dataTable"></table>
+
+    <script>
+        function myFunction() {
+        var input, filter, table, tr, td, i, txtValue;
+        input = document.getElementById("myInput");
+        filter = input.value.toUpperCase();
+        table = document.getElementById("dataTable");
+        tr = table.getElementsByTagName("tr");
+
+  // Loop through all table rows, and hide those who don't match the search query
+        for (i = 0; i < tr.length; i++) {
+            td = tr[i].getElementsByTagName("td")[0];
+            if (td) {
+                txtValue = td.textContent || td.innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
+                }
+            }
+        }
+    }
+        document.getElementById('fileInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            const reader = new FileReader();
+
+            reader.onload = function(event) {
+                const csvData = event.target.result;
+                const rows = csvData.split('\n'); // Split rows by new lines
+                const table = document.getElementById('dataTable');
+
+                // Clear previous table content
+                table.innerHTML = '';
+
+                // Loop through rows
+                rows.forEach(function(row, rowIndex) {
+                    const columns = row.split(','); // Split columns by comma
+                    const tr = document.createElement('tr');
+
+                    columns.forEach(function(column) {
+                        const cell = rowIndex === 0 ? document.createElement('th') : document.createElement('td');
+                        cell.textContent = column.trim(); // Clean up any extra spaces
+                        tr.appendChild(cell);
+                    });
+
+                    table.appendChild(tr);
+                });
+            };
+
+            reader.readAsText(file); // Read the file as text
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Input and Table Display</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0e5d8; /* Cream background */
+            color: #333;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #003366; /* Dark Blue color */
+            text-align: center;
+        }
+
+        input[type="file"] {
+            display: block;
+            margin: 20px auto;
+            padding: 10px;
+            border: 2px solid #003366;
+            background-color: #f0e5d8;
+            color: #003366;
+            cursor: pointer;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #003366; /* Dark Blue for border */
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #003366; /* Dark Blue */
+            color: #f0e5d8; /* Cream text */
+        }
+
+        td {
+            background-color: #f0f0f0; /* Light Cream for table rows */
+        }
+
+        tr:nth-child(even) td {
+            background-color: #e3e3e3; /* Slightly darker cream for alternate rows */
+        }
+
+        tr:hover td {
+            background-color: #c0d6e4; /* Light Blue for hover effect */
+        }
+    </style>
+</head>
+<body>
+    <h1>CSV File Input and Table Display</h1>
+    <input type="file" id="fileInput" accept=".csv">
+    <table id="dataTable"></table>
+
+    <script>
+        document.getElementById('fileInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            Papa.parse(file, {
+                complete: function(results) {
+                    displayTable(results.data);
+                }
+            });
+        });
+
+        function displayTable(data) {
+            const table = document.getElementById('dataTable');
+            table.innerHTML = '';
+            
+            const header = table.createTHead();
+            const headerRow = header.insertRow(0);
+            data[0].forEach(text => {
+                const th = document.createElement('th');
+                th.textContent = text;
+                headerRow.appendChild(th);
+            });
+
+            const body = table.createTBody();
+            for (let i = 1; i < data.length; i++) {
+                const row = body.insertRow();
+                data[i].forEach(text => {
+                    const cell = row.insertCell();
+                    cell.textContent = text;
+                });
+            }
+        }
+    </script>
+</body>
+</html>
